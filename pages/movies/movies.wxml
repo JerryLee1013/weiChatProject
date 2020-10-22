@@ -1,0 +1,10 @@
+<!--pages/movies/movies.wxml-->
+<view class="moviesContainer">
+  <image class="movieImg" src="/images/index/cart.jpg"></image>
+  <view class="movie_detail">
+    <text class="movie_name">{{movie.data.originalName}}</text>
+    <text class="movie_year">年份：{{movie.data.year}}</text>
+    <text class="movie_director">导演：{{movie.data.director[0].data[0].name}}</text>
+  </view>
+  <text class="movie_rating">{{movie.data.doubanRating}}</text>
+</view>

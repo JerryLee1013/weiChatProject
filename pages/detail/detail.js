@@ -9,9 +9,27 @@ Page({
     detailObj: {},
     index: null,
     isCollection: false,
-    isShare:false
+    isShare:false,
+    isMusicPlay: false,
+    BackgroundAudioManager: null
   },
-
+  //  播放音乐
+  handleMusicplay () {
+    let isMusicPlay = !this.data.isMusicPlay
+    this.setData({
+      isMusicPlay
+    })
+    let {dataUrl, title} = this.data.detailObj.music
+    const BackgroundAudioManager = this.data.BackgroundAudioManager
+    BackgroundAudioManager.src = dataUrl
+    BackgroundAudioManager.title = title
+    if (isMusicPlay) {
+      BackgroundAudioManager.play()
+    } else {
+      BackgroundAudioManager.pause()
+    }
+    
+  },
   toggleCollection () {
    let isCollection = !this.data.isCollection
    this.setData({
@@ -48,10 +66,8 @@ Page({
     this.setData({
      isShare
     })
-    let title = isShare ? '已分享' : '未分享'
-    wx.showToast({
-      title,
-      icon: 'success'
+    wx.showActionSheet({
+      itemList: ['分享到微信', '分享到qq', '分享到微博', '取消'],
     })
    },
   /**
@@ -79,6 +95,37 @@ Page({
         isCollection: detailStorage[index]
       })
     }
+
+    // 监听音乐播放
+    const BackgroundAudioManager = wx.getBackgroundAudioManager()
+    this.setData({
+      BackgroundAudioManager
+    })
+    BackgroundAudioManager.onPlay(() => {
+      if (!this.data.isMusicPlay) {
+        this.setData({
+          isMusicPlay:!this.data.isMusicPlay
+        })
+      }
+     
+      console.log('播放')
+    })
+    // 监听音乐暂停
+    BackgroundAudioManager.onPause(() => {
+      console.log('暂停')
+      if (this.data.isMusicPlay) {
+        this.setData({
+          isMusicPlay:!this.data.isMusicPlay
+        })
+      }
+    })
+    // 监听背景音频自然播放结束事件
+    BackgroundAudioManager.onEnded(() => {
+      this.setData({
+        isMusicPlay:!this.data.isMusicPlay
+      })
+    })
+
   },
 
   /**
